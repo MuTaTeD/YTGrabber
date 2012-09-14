@@ -44,11 +44,11 @@ public class YTGrabber extends HttpServlet {
                     String json=generateMalformedUrlException();
                     out.println(json);
                 }
-                /*else if(!url.startsWith("http://youtube.com"))
+                else if(!url.startsWith("http://youtube.com"))
                 {
                     String json=generateMalformedUrlException();
                     out.println(json);
-                }*/
+                }
                 else
                 {
                 url=filterUrl(url);
@@ -101,13 +101,13 @@ public class YTGrabber extends HttpServlet {
 		if(link.indexOf("codecs")>=0)
 		{
 			index=link.indexOf("codecs");
-			link=link.substring(0,index-2);
+			String temp1=link.substring(0,index-2);
+			index=link.indexOf("fallback");
+			String temp2=link.substring(index-1);
+			link=temp1+temp2;
 		}
-		else
-		{
-			index=link.lastIndexOf("&");
-			link=link.substring(0,index);
-		}
+		
+
 		return link;
     }
     
@@ -128,11 +128,11 @@ public class YTGrabber extends HttpServlet {
     
     public String extractFormat(String link)
     {
-        if(link.endsWith("mp4"))
+        if(link.indexOf("mp4")>0)
             return "mp4";
-        else if(link.endsWith("flv"))
+        else if(link.indexOf("flv")>0)
             return "flv";
-        else if(link.endsWith("3gpp"))
+        else if(link.indexOf("3gpp")>0)
             return "3gpp";
         return "Format";
     }
@@ -164,6 +164,7 @@ public class YTGrabber extends HttpServlet {
             {
                 current=filterLink(current);
                 current=current.replace('&','!');
+                current=replace(current,"sig", "signature");
                 tempObj.put("type",extractFormat(current)+" "+extractQuality(current));
                 tempObj.put("link","http://projects-sushilkumar.rhcloud.com/YTDownload?url="+current+"&title="+title+"."+extractFormat(current));
                 array.add(tempObj);
@@ -191,6 +192,20 @@ public class YTGrabber extends HttpServlet {
         obj.put("error","Not a valid URL");
         return obj.toJSONString();
     }
+    
+    static String replace(String str, String pattern, String replace) {
+    int s = 0;
+    int e = 0;
+    StringBuilder result = new StringBuilder();
+
+    while ((e = str.indexOf(pattern, s)) >= 0) {
+        result.append(str.substring(s, e));
+        result.append(replace);
+        s = e+pattern.length();
+    }
+    result.append(str.substring(s));
+    return result.toString();
+}
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
