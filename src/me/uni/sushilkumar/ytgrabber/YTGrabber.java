@@ -44,11 +44,7 @@ public class YTGrabber extends HttpServlet {
                     String json=generateMalformedUrlException();
                     out.println(json);
                 }
-                else if(!url.startsWith("http://youtube.com"))
-                {
-                    String json=generateMalformedUrlException();
-                    out.println(json);
-                }
+                
                 else
                 {
                 url=filterUrl(url);
